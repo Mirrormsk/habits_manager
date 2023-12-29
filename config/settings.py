@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "rest_framework",
 
     "users",
+    "habits.apps.HabitsConfig"
 ]
 
 MIDDLEWARE = [
