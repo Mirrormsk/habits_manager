@@ -12,6 +12,7 @@ class Habit(models.Model):
     reward = models.CharField(max_length=255, verbose_name="награда")
     duration = models.DurationField(verbose_name="продолжительность")
     is_public = models.BooleanField(verbose_name="публичная", default=False)
+    last_sent = models.DateTimeField(verbose_name="отправлено", null=True, blank=True)
 
     class Meta:
         verbose_name = 'привычка'
