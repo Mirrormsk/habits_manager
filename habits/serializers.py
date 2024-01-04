@@ -8,9 +8,16 @@ from habits.validators import (
     pleasant_cant_have_reward_or_related,
     frequency_cant_be_less_than_weekly,
 )
+from users.serializers import UserPublicSerializer
 
 
 class HabitSerializer(serializers.ModelSerializer):
+
+    related_habit = serializers.SlugRelatedField(
+        "action",
+        read_only=True,
+    )
+
     class Meta:
         model = Habit
         fields = "__all__"
@@ -21,3 +28,15 @@ class HabitSerializer(serializers.ModelSerializer):
             pleasant_cant_have_reward_or_related,
             frequency_cant_be_less_than_weekly,
         ]
+
+
+class HabitPublicSerializer(serializers.ModelSerializer):
+    user = UserPublicSerializer(read_only=True)
+    related_habit = serializers.SlugRelatedField(
+        "action",
+        read_only=True,
+    )
+
+    class Meta:
+        model = Habit
+        fields = "__all__"
