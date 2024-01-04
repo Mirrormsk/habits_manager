@@ -12,8 +12,7 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated, IsProfileOwnerOrReadOnly]
-    lookup_field = "pk"
-
+    lookup_field = 'pk'
 
     def perform_create(self, serializer):
         user = serializer.save()
@@ -22,9 +21,9 @@ class UserViewSet(viewsets.ModelViewSet):
         user.save()
 
     def get_serializer_class(self):
-        user = self.request.user
 
         if self.action == "retrieve":
+            user = self.request.user
             instance = self.get_object()
             if instance == user:
                 return UserSerializer
