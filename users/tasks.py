@@ -11,3 +11,8 @@ user_service = UserService()
 @shared_task
 def check_bot_updates():
     user_service.check_updates(telegram_service)
+
+
+@shared_task
+def send_notifications():
+    user_service.send_habits_notification(telegram_service)
