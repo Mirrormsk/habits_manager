@@ -13,7 +13,6 @@ from users.serializers import UserPublicSerializer
 
 
 class HabitCreateSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Habit
         fields = "__all__"
@@ -37,7 +36,17 @@ class HabitPublicSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Habit
-        fields = "__all__"
+        fields = (
+            "related_habit",
+            "place",
+            "action",
+            "schedule",
+            "is_pleasant",
+            "frequency",
+            "reward",
+            "duration",
+            "user",
+        )
 
 
 class HabitListSerializer(serializers.ModelSerializer):
