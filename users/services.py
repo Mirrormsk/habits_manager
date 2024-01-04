@@ -1,5 +1,9 @@
+import datetime
+
 from django.conf import settings
 import logging
+
+from habits.models import Habit
 from habits.services import TelegramService
 from users.models import User
 import base64
@@ -56,7 +60,7 @@ class UserService:
 
                         telegram_service.send_message(
                             chat_id=user.chat_id,
-                            text=f"Ваш Telegram-аккаунт успешно привязан к учетной записи {user.email}"
+                            text=f"Ваш Telegram-аккаунт успешно привязан к учетной записи {user.email}",
                         )
 
                 except Exception as ex:
@@ -68,3 +72,30 @@ class UserService:
         for update in updates:
             if "message" in update.keys():
                 self.process_invite_update(update, telegram_service)
+
+    @staticmethod
+    def send_habits_notification(telegram_service: TelegramService):
+        users = User.objects.all()
+        tz_info = datetime.timezone(datetime.timedelta(hours=3))
+        for user in users:
+            if user.chat_id:
+                now = datetime.datetime.now(tz_info)
+                user_habits = Habit.objects.filter(user=user)
+                for habit in user_habits:
+
+                    if (
+                        not habit.last_sent
+                        or now - habit.last_sent
+                        >= datetime.timedelta(days=habit.frequency)
+                    ):
+                        if (not habit.is_pleasant) and habit.schedule <= now.time():
+                            telegram_service.send_message(
+                                text=f"Напоминание о привычке:\n"
+                                f"Действие: {habit.action}\n"
+                                f"Место: {habit.place}\n"
+                                f"Время: {habit.schedule}\n"
+                                f"Награда: {habit.reward if habit.reward else habit.related_habit.action}",
+                                chat_id=user.chat_id,
+                            )
+                            habit.last_sent = now
+                            habit.save()
