@@ -12,6 +12,8 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated, IsProfileOwnerOrReadOnly]
+    lookup_field = "pk"
+
 
     def perform_create(self, serializer):
         user = serializer.save()
@@ -35,8 +37,9 @@ class UserViewSet(viewsets.ModelViewSet):
             return UserSerializer
 
     def get_permissions(self):
-        if self.action == "create":
-            permission_classes = [AllowAny]
-        else:
-            permission_classes = [IsAuthenticated]
+        match self.action:
+            case "create":
+                permission_classes = [AllowAny]
+            case _:
+                permission_classes = [IsAuthenticated, IsProfileOwnerOrReadOnly]
         return [permission() for permission in permission_classes]
