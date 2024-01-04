@@ -15,7 +15,9 @@ def pleasant_xor_related(habit):
 def duration_less_than_120s(habit):
     """Habit duration can be only in (0, 120] seconds"""
     if not timedelta(seconds=0) < habit["duration"] <= timedelta(seconds=120):
-        raise serializers.ValidationError("Duration must be positive and less than 2 min")
+        raise serializers.ValidationError(
+            "Duration must be positive and less than 2 min"
+        )
 
 
 def only_pleasant_in_related(habit):
@@ -23,11 +25,21 @@ def only_pleasant_in_related(habit):
     habit = dict(habit)
     if related := habit.get("related_habit"):
         if not related.is_pleasant:
-            raise serializers.ValidationError("Only pleasant habit can be chosen for a related habit")
+            raise serializers.ValidationError(
+                "Only pleasant habit can be chosen for a related habit"
+            )
 
 
 def pleasant_cant_have_reward_or_related(habit):
     """Pleasant habit can't have reward or related habit"""
     habit = dict(habit)
-    if habit['is_pleasant'] and any([habit.get('reward'), habit.get('related_habit')]):
-        raise serializers.ValidationError("Pleasant habit can't have reward or related habit")
+    if habit["is_pleasant"] and any([habit.get("reward"), habit.get("related_habit")]):
+        raise serializers.ValidationError(
+            "Pleasant habit can't have reward or related habit"
+        )
+
+
+def frequency_cant_be_less_than_weekly(habit):
+    """You can't make a habit less than once every 7 days."""
+    if habit["frequency"] > 7:
+        raise serializers.ValidationError("You can't make a habit less than once every 7 days")
