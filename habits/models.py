@@ -13,7 +13,7 @@ class Habit(models.Model):
     frequency = models.PositiveSmallIntegerField(
         verbose_name="периодичность (дни)", default=1
     )
-    reward = models.CharField(max_length=255, verbose_name="награда")
+    reward = models.CharField(max_length=255, verbose_name="награда", null=True, blank=True)
     duration = models.DurationField(verbose_name="продолжительность")
     is_public = models.BooleanField(verbose_name="публичная", default=False)
     last_sent = models.DateTimeField(verbose_name="отправлено", null=True, blank=True)
