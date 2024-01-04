@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "corsheaders",
     "django_celery_beat",
-    
+
     "users",
     "habits.apps.HabitsConfig",
 ]
@@ -140,8 +140,12 @@ CELERY_TASK_TIME_LIMIT = env("CELERY_TASK_TIME_LIMIT")
 
 
 CELERY_BEAT_SCHEDULE = {
-    'task-name': {
+    'check_updates': {
         'task': 'users.tasks.check_bot_updates',
         "schedule": timedelta(seconds=10)
+    },
+    'send_notifications': {
+            'task': 'users.tasks.send_notifications',
+            "schedule": timedelta(minutes=1)
     },
 }
