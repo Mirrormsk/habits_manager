@@ -24,3 +24,10 @@ def only_pleasant_in_related(habit):
     if related := habit.get("related_habit"):
         if not related.is_pleasant:
             raise serializers.ValidationError("Only pleasant habit can be chosen for a related habit")
+
+
+def pleasant_cant_have_reward_or_related(habit):
+    """Pleasant habit can't have reward or related habit"""
+    habit = dict(habit)
+    if habit['is_pleasant'] and any([habit.get('reward'), habit.get('related_habit')]):
+        raise serializers.ValidationError("Pleasant habit can't have reward or related habit")
