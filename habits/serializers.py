@@ -11,7 +11,7 @@ from habits.validators import (
 from users.serializers import UserPublicSerializer
 
 
-class HabitSerializer(serializers.ModelSerializer):
+class HabitCreateSerializer(serializers.ModelSerializer):
 
     related_habit = serializers.SlugRelatedField(
         "action",
@@ -21,6 +21,7 @@ class HabitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Habit
         fields = "__all__"
+        read_only_fields = ["user"]
         validators = [
             pleasant_xor_related,
             duration_less_than_120s,
@@ -40,3 +41,26 @@ class HabitPublicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Habit
         fields = "__all__"
+
+
+class HabitListSerializer(serializers.ModelSerializer):
+
+    related_habit = serializers.SlugRelatedField(
+        "action",
+        read_only=True,
+    )
+
+    class Meta:
+        model = Habit
+        fields = (
+            "id",
+            "related_habit",
+            "place",
+            "action",
+            "schedule",
+            "is_pleasant",
+            "frequency",
+            "reward",
+            "duration",
+            "is_public",
+        )
