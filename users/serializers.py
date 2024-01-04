@@ -7,8 +7,8 @@ from users.models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = "__all__"
-        read_only_fields = ["id"]
+        fields = ['id', 'email', 'password', 'chat_id', 'tg_invite_link', "city"]
+        read_only_fields = ["id", "tg_invite_link"]
 
     def validate_password(self, value: str) -> str:
         """
@@ -28,4 +28,4 @@ class UserPublicSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("first_name",)
+        fields = ("first_name", 'pk')
