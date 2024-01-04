@@ -5,11 +5,19 @@ from users.models import User
 from users.permissions import IsProfileOwnerOrReadOnly
 from users.serializers import UserSerializer, UserPublicSerializer
 
+from users.tasks import telegram_service, user_service
+
 
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated, IsProfileOwnerOrReadOnly]
+
+    def perform_create(self, serializer):
+        user = serializer.save()
+        telegram_invite_link = user_service.generate_invite(user, telegram_service)
+        user.tg_invite_link = telegram_invite_link
+        user.save()
 
     def get_serializer_class(self):
         user = self.request.user
