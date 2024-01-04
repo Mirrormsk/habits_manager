@@ -4,6 +4,8 @@ import environ
 
 from pathlib import Path
 
+from celery.schedules import crontab
+
 env = environ.Env(DEBUG=(bool, False))
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,10 +28,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
     "rest_framework",
     "drf_yasg",
     "rest_framework_simplejwt",
     "corsheaders",
+    "django_celery_beat",
+    
     "users",
     "habits.apps.HabitsConfig",
 ]
@@ -124,3 +129,19 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 CORS_ALLOW_ALL_ORIGINS = False
+
+TELEGRAM_TOKEN = env("TELEGRAM_TOKEN")
+
+CELERY_BROKER_URL = env("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND")
+CELERY_TIMEZONE = env("CELERY_TIMEZONE")
+CELERY_TASK_TRACK_STARTED = env("CELERY_TASK_TRACK_STARTED")
+CELERY_TASK_TIME_LIMIT = env("CELERY_TASK_TIME_LIMIT")
+
+
+CELERY_BEAT_SCHEDULE = {
+    'task-name': {
+        'task': 'users.tasks.check_bot_updates',
+        "schedule": timedelta(seconds=10)
+    },
+}
