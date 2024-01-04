@@ -6,7 +6,7 @@ from rest_framework import serializers
 def pleasant_xor_related(habit):
     """Habit can have reward, or related habit, but only something one"""
     habit = dict(habit)
-    if habit.get("reward") and habit.get("related_habit"):
+    if not habit["is_pleasant"] and not bool(habit.get("reward")) ^ bool(habit.get("related_habit")):
         raise serializers.ValidationError(
             "Choose a related habit or a reward, but not both."
         )
@@ -43,3 +43,10 @@ def frequency_cant_be_less_than_weekly(habit):
     """You can't make a habit less than once every 7 days."""
     if habit["frequency"] > 7:
         raise serializers.ValidationError("You can't make a habit less than once every 7 days")
+
+
+def useful_habit_must_have_schedule(habit):
+    """Useful habit must have a schedule"""
+    habit = dict(habit)
+    if not habit["is_pleasant"] and not habit.get("schedule"):
+        raise serializers.ValidationError("Useful habit must have a schedule")
