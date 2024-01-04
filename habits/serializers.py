@@ -7,16 +7,12 @@ from habits.validators import (
     only_pleasant_in_related,
     pleasant_cant_have_reward_or_related,
     frequency_cant_be_less_than_weekly,
+    useful_habit_must_have_schedule,
 )
 from users.serializers import UserPublicSerializer
 
 
 class HabitCreateSerializer(serializers.ModelSerializer):
-
-    related_habit = serializers.SlugRelatedField(
-        "action",
-        read_only=True,
-    )
 
     class Meta:
         model = Habit
@@ -28,6 +24,7 @@ class HabitCreateSerializer(serializers.ModelSerializer):
             only_pleasant_in_related,
             pleasant_cant_have_reward_or_related,
             frequency_cant_be_less_than_weekly,
+            useful_habit_must_have_schedule,
         ]
 
 
