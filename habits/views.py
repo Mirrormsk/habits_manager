@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
@@ -28,6 +30,52 @@ class HabitViewSet(ModelViewSet):
 
         return Habit.objects.filter(user=user)
 
+    @swagger_auto_schema(
+        responses={
+            200: openapi.Response(
+                description="Public habits list",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        "user": openapi.Schema(
+                            type=openapi.TYPE_OBJECT,
+                            properties={
+                                "first_name": openapi.Schema(
+                                    type=openapi.TYPE_STRING, description="User name"
+                                ),
+                                "pk": openapi.Schema(
+                                    type=openapi.TYPE_INTEGER, description="User pk"
+                                ),
+                            },
+                        ),
+                        "related_habit": openapi.Schema(
+                            type=openapi.TYPE_STRING, description="Related habit action"
+                        ),
+                        "place": openapi.Schema(
+                            type=openapi.TYPE_STRING, description="Habit action place"
+                        ),
+                        "action": openapi.Schema(
+                            type=openapi.TYPE_STRING, description="Habit action"
+                        ),
+                        "schedule": openapi.Schema(
+                            type=openapi.TYPE_STRING, description="Habit schedule time"
+                        ),
+                        "is_pleasant": openapi.Schema(
+                            type=openapi.TYPE_BOOLEAN, description="Is habit a pleasant"
+                        ),
+                        "frequency": openapi.Schema(
+                            type=openapi.TYPE_INTEGER, description="Habit frequency in days"
+                        ),
+                        "reward": openapi.Schema(
+                            type=openapi.TYPE_STRING, description="Habit reward"
+                        ),
+                        "duration": openapi.Schema(
+                            type=openapi.TYPE_STRING, description="Habit duration"
+                        )},
+                ),
+            ),
+        },
+    )
     @action(detail=False, methods=["get"])
     def public(self, request, pk=None):
         queryset = Habit.objects.filter(is_public=True)
@@ -58,5 +106,3 @@ class HabitViewSet(ModelViewSet):
                 return HabitCreateSerializer
             case "list" | "retrieve":
                 return HabitListSerializer
-
-
