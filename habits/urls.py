@@ -10,3 +10,4 @@ router.register(r'habits', HabitViewSet, basename='habits')
 urlpatterns = []
 
 urlpatterns += router.urls
+
