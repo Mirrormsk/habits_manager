@@ -16,12 +16,18 @@ def pleasant_xor_related(value, instance: Habit):
     if "reward" in value.keys():
         reward = value["reward"]
     else:
-        reward = instance.reward
+        if instance:
+            reward = instance.reward
+        else:
+            reward = None
 
     if "related_habit" in value.keys():
         related_habit = value["related_habit"]
     else:
-        related_habit = instance.related_habit
+        if instance:
+            related_habit = instance.related_habit
+        else:
+            related_habit = None
 
     if not is_pleasant and not bool(reward) ^ bool(related_habit):
         raise serializers.ValidationError(
@@ -47,12 +53,15 @@ def only_pleasant_in_related(value, instance: Habit):
     """Only pleasant habit can be chosen for a related habit"""
     value = dict(value)
     if "related_habit" in value.keys():
-        related = value["related_habit"]
+        related_habit = value["related_habit"]
     else:
-        related = instance.related_habit
+        if instance:
+            related_habit = instance.related_habit
+        else:
+            related_habit = None
 
-    if related:
-        if not related.is_pleasant:
+    if related_habit:
+        if not related_habit.is_pleasant:
             raise serializers.ValidationError(
                 "Only pleasant habit can be chosen for a related habit"
             )
@@ -69,11 +78,17 @@ def pleasant_cant_have_reward_or_related(value, instance: Habit):
     if "reward" in value.keys():
         reward = value["reward"]
     else:
-        reward = instance.reward
+        if instance:
+            reward = instance.reward
+        else:
+            reward = None
     if "related_habit" in value.keys():
         related_habit = value["related_habit"]
     else:
-        related_habit = instance.related_habit
+        if instance:
+            related_habit = instance.related_habit
+        else:
+            related_habit = None
 
     if is_pleasant and any([reward, related_habit]):
         raise serializers.ValidationError(
@@ -105,7 +120,10 @@ def useful_habit_must_have_schedule(value, instance: Habit):
     if "schedule" in value.keys():
         schedule = value["schedule"]
     else:
-        schedule = instance.schedule
+        if instance:
+            schedule = instance.schedule
+        else:
+            schedule = None
 
     if not is_pleasant and not schedule:
         raise serializers.ValidationError("Useful habit must have a schedule")
