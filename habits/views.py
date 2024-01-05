@@ -3,6 +3,7 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from rest_framework.viewsets import ModelViewSet
 
@@ -64,14 +65,16 @@ class HabitViewSet(ModelViewSet):
                             type=openapi.TYPE_BOOLEAN, description="Is habit a pleasant"
                         ),
                         "frequency": openapi.Schema(
-                            type=openapi.TYPE_INTEGER, description="Habit frequency in days"
+                            type=openapi.TYPE_INTEGER,
+                            description="Habit frequency in days",
                         ),
                         "reward": openapi.Schema(
                             type=openapi.TYPE_STRING, description="Habit reward"
                         ),
                         "duration": openapi.Schema(
                             type=openapi.TYPE_STRING, description="Habit duration"
-                        )},
+                        ),
+                    },
                 ),
             ),
         },
