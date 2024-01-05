@@ -1,10 +1,9 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from users.models import User
 from users.permissions import IsProfileOwnerOrReadOnly
 from users.serializers import UserSerializer, UserPublicSerializer
-
 from users.tasks import telegram_service, user_service
 
 

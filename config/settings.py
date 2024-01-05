@@ -1,10 +1,7 @@
 from datetime import timedelta
-
-import environ
-
 from pathlib import Path
 
-from celery.schedules import crontab
+import environ
 
 env = environ.Env(DEBUG=(bool, False))
 
@@ -18,9 +15,6 @@ DEBUG = env("DEBUG", default=False)
 
 ALLOWED_HOSTS = []
 
-
-# Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -28,13 +22,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     "rest_framework",
     "drf_yasg",
     "rest_framework_simplejwt",
     "corsheaders",
     "django_celery_beat",
-
     "users",
     "habits.apps.HabitsConfig",
 ]
@@ -140,22 +132,22 @@ CELERY_TASK_TIME_LIMIT = env("CELERY_TASK_TIME_LIMIT")
 
 
 CELERY_BEAT_SCHEDULE = {
-    'check_updates': {
-        'task': 'users.tasks.check_bot_updates',
-        "schedule": timedelta(seconds=10)
+    "check_updates": {
+        "task": "users.tasks.check_bot_updates",
+        "schedule": timedelta(seconds=10),
     },
-    'send_notifications': {
-            'task': 'users.tasks.send_notifications',
-            "schedule": timedelta(minutes=1)
+    "send_notifications": {
+        "task": "users.tasks.send_notifications",
+        "schedule": timedelta(minutes=1),
     },
 }
 
 SWAGGER_SETTINGS = {
-    'SECURITY_DEFINITIONS': {
-        'Bearer': {
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'header',
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
         },
     },
 }

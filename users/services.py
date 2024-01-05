@@ -1,12 +1,10 @@
+import base64
 import datetime
-
-from django.conf import settings
 import logging
 
 from habits.models import Habit
 from habits.services import TelegramService
 from users.models import User
-import base64
 
 logger = logging.getLogger(__name__)
 
@@ -84,9 +82,7 @@ class UserService:
                 for habit in user_habits:
 
                     if (
-                        not habit.last_sent
-                        or now - habit.last_sent
-                        >= datetime.timedelta(days=habit.frequency)
+                        not habit.last_sent or now - habit.last_sent >= datetime.timedelta(days=habit.frequency)
                     ):
                         if (not habit.is_pleasant) and habit.schedule <= now.time():
                             telegram_service.send_message(
