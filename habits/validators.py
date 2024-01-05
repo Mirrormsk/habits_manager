@@ -1,52 +1,111 @@
 from datetime import timedelta
 
 from rest_framework import serializers
+from rest_framework.generics import get_object_or_404
+
+from habits.models import Habit
 
 
-def pleasant_xor_related(habit):
+def pleasant_xor_related(value, instance: Habit):
     """Habit can have reward, or related habit, but only something one"""
-    habit = dict(habit)
-    if not habit["is_pleasant"] and not bool(habit.get("reward")) ^ bool(habit.get("related_habit")):
+    if "is_pleasant" in value.keys():
+        is_pleasant = value["is_pleasant"]
+    else:
+        is_pleasant = instance.is_pleasant
+
+    if "reward" in value.keys():
+        reward = value["reward"]
+    else:
+        reward = instance.reward
+
+    if "related_habit" in value.keys():
+        related_habit = value["related_habit"]
+    else:
+        related_habit = instance.related_habit
+
+    if not is_pleasant and not bool(reward) ^ bool(related_habit):
         raise serializers.ValidationError(
             "Choose a related habit or a reward, but not both."
         )
 
 
-def duration_less_than_120s(habit):
+def duration_less_than_120s(value, instance: Habit):
     """Habit duration can be only in (0, 120] seconds"""
-    if not timedelta(seconds=0) < habit["duration"] <= timedelta(seconds=120):
+    value = dict(value)
+    if "duration" in value.keys():
+        duration = value["duration"]
+    else:
+        duration = instance.duration
+
+    if not timedelta(seconds=0) < duration <= timedelta(seconds=120):
         raise serializers.ValidationError(
             "Duration must be positive and less than 2 min"
         )
 
 
-def only_pleasant_in_related(habit):
+def only_pleasant_in_related(value, instance: Habit):
     """Only pleasant habit can be chosen for a related habit"""
-    habit = dict(habit)
-    if related := habit.get("related_habit"):
+    value = dict(value)
+    if "related_habit" in value.keys():
+        related = value["related_habit"]
+    else:
+        related = instance.related_habit
+
+    if related:
         if not related.is_pleasant:
             raise serializers.ValidationError(
                 "Only pleasant habit can be chosen for a related habit"
             )
 
 
-def pleasant_cant_have_reward_or_related(habit):
+def pleasant_cant_have_reward_or_related(value, instance: Habit):
     """Pleasant habit can't have reward or related habit"""
-    habit = dict(habit)
-    if habit["is_pleasant"] and any([habit.get("reward"), habit.get("related_habit")]):
+    value = dict(value)
+
+    if "is_pleasant" in value.keys():
+        is_pleasant = value["is_pleasant"]
+    else:
+        is_pleasant = instance.is_pleasant
+    if "reward" in value.keys():
+        reward = value["reward"]
+    else:
+        reward = instance.reward
+    if "related_habit" in value.keys():
+        related_habit = value["related_habit"]
+    else:
+        related_habit = instance.related_habit
+
+    if is_pleasant and any([reward, related_habit]):
         raise serializers.ValidationError(
             "Pleasant habit can't have reward or related habit"
         )
 
 
-def frequency_cant_be_less_than_weekly(habit):
+def frequency_cant_be_less_than_weekly(value, instance: Habit):
     """You can't make a habit less than once every 7 days."""
-    if habit["frequency"] > 7:
-        raise serializers.ValidationError("You can't make a habit less than once every 7 days")
+    value = dict(value)
+    if "frequency" in value.keys():
+        frequency = value["frequency"]
+    else:
+        frequency = instance.frequency
+
+    if frequency > 7:
+        raise serializers.ValidationError(
+            "You can't make a habit less than once every 7 days"
+        )
 
 
-def useful_habit_must_have_schedule(habit):
+def useful_habit_must_have_schedule(value, instance: Habit):
     """Useful habit must have a schedule"""
-    habit = dict(habit)
-    if not habit["is_pleasant"] and not habit.get("schedule"):
+    value = dict(value)
+    if "is_pleasant" in value.keys():
+        is_pleasant = value["is_pleasant"]
+    else:
+        is_pleasant = instance.is_pleasant
+    if "schedule" in value.keys():
+        schedule = value["schedule"]
+    else:
+        schedule = instance.schedule
+
+    if not is_pleasant and not schedule:
         raise serializers.ValidationError("Useful habit must have a schedule")
