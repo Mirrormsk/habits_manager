@@ -66,7 +66,15 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {"default": env.db()}
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env("POSTGRES_DB"),
+        "USER": env("POSTGRES_PASSWORD"),
+        "PASSWORD": env("POSTGRES_PASSWORD"),
+        "HOST": env("POSTGRES_HOST")
+    }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -111,13 +119,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "users.User"
 
-
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
+    'http://0.0.0.0',
+
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",
+    'http://0.0.0.0',
 ]
 
 CORS_ALLOW_ALL_ORIGINS = False
